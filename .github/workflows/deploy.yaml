@@ -13,9 +13,9 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SOURCE_S3_PATH: s3://test-upload-buck/input/test_file.csv
-      TARGET_S3_PATH: s3://test-upload-buck/output/test_file.parque
-      SCRIPT_LOCATION: s3://test-upload-buck/script_path/job_script.py
+      SOURCE_S3_PATH: 's3://test-upload-buck/input/test_file.csv'
+      TARGET_S3_PATH: 's3://test-upload-buck/output/test_file.parque'
+      SCRIPT_LOCATION: 's3://test-upload-buck/script_path/job_script.py'
 
     steps:
       - name: Checkout repo
