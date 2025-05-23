@@ -1,0 +1,119 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Step Function that runs two Glue jobs in parallel
+
+Parameters:
+  GlueScriptPath1:
+    Type: String
+    Description: S3 path to the first Glue script 
+    default: "s3://test-upload-buck/script_path/job_script.py"
+
+  # GlueScriptPath2:
+  #   Type: String
+  #   Description: S3 path to the second Glue script (e.g., s3://your-bucket/scripts/job2.py)
+
+Resources:
+
+  GlueExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GlueParallelJobsRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: glue.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
+      Policies:
+        - PolicyName: GlueS3AccessPolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                Resource: "*"
+
+  GlueJob1:
+    Type: AWS::Glue::Job
+    Properties:
+      Name: GlueJob1
+      Role: !GetAtt GlueExecutionRole.Arn
+      Command:
+        Name: glueetl
+        ScriptLocation: !Ref GlueScriptPath1
+        PythonVersion: 3
+      GlueVersion: "4.0"
+      MaxCapacity: 2
+
+  # GlueJob2:
+  #   Type: AWS::Glue::Job
+  #   Properties:
+  #     Name: GlueJob2
+  #     Role: !GetAtt GlueExecutionRole.Arn
+  #     Command:
+  #       Name: glueetl
+  #       ScriptLocation: !Ref GlueScriptPath2
+  #       PythonVersion: 3
+  #     GlueVersion: "4.0"
+  #     MaxCapacity: 2
+
+  StepFunctionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: GlueParallelStepFunctionRole
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: states.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: GlueJobInvokePolicy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - glue:StartJobRun
+                  - glue:GetJobRun
+                Resource: "*"
+
+  SequencecialStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      StateMachineName: RunGlueJobsInSequence
+      RoleArn: !GetAtt StepFunctionRole.Arn
+      DefinitionString: !Sub |
+        {
+          "Comment": "Run two AWS Glue jobs in sequence",
+          "StartAt": "RunGlueJob1",
+          "States": {
+            "RunGlueJob1": {
+              "Type": "Task",
+              "Resource": "arn:aws:states:::glue:startJobRun.sync",
+              "Parameters": {
+                "JobName": "GlueJob1"
+              },
+              "End": true
+            }
+          }
+        }
+
+Outputs:
+  GlueJob1:
+    Description: Name of the first Glue job
+    Value: !Ref GlueJob1
+
+  # GlueJob2:
+  #   Description: Name of the second Glue job
+  #   Value: !Ref GlueJob2
+
+  StepFunction:
+    Description: ARN of the Step Function
+    Value: !Ref ParallelGlueStateMachine
