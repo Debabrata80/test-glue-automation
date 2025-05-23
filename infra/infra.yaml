@@ -2,7 +2,17 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Step Function that runs two Glue jobs in parallel
 
 Parameters:
-  GlueScriptPath1:
+  SOURCE_S3_PATH:
+    Type: String
+    Description: S3 path for source csv file
+    Default: "s3://test-upload-buck/input/test_file.csv"
+
+  TARGET_S3_PATH:
+    Type: String
+    Description: S3 path for target parque file 
+    Default: "s3://test-upload-buck/output/test_file.parque"
+
+  SCRIPT_LOCATION:
     Type: String
     Description: S3 path to the first Glue script 
     Default: "s3://test-upload-buck/script_path/job_script.py"
@@ -46,10 +56,15 @@ Resources:
       Role: !GetAtt GlueExecutionRole.Arn
       Command:
         Name: glueetl
-        ScriptLocation: !Ref GlueScriptPath1
+        ScriptLocation: !Ref SCRIPT_LOCATION
         PythonVersion: 3
+      DefaultArguments:
+        "--SOURCE_S3_PATH": !Ref SOURCE_S3_PATH
+        "--TARGET_S3_PATH": !Ref TARGET_S3_PATH
+        "--TempDir": "s3://test-upload-buck/glue/"
+        "--enable-metrics": "true"
       GlueVersion: "4.0"
-      MaxCapacity: 2
+      MaxCapacity: 5
 
   # GlueJob2:
   #   Type: AWS::Glue::Job

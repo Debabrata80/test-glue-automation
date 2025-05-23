@@ -12,6 +12,10 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      SOURCE_S3_PATH: s3://test-upload-buck/input/test_file.csv
+      TARGET_S3_PATH: s3://test-upload-buck/output/test_file.parque
+      SCRIPT_LOCATION: s3://test-upload-buck/script_path/job_script.py
 
     steps:
       - name: Checkout repo
@@ -26,11 +30,15 @@ jobs:
 
       - name: Upload Glue script to S3
         run: |
-          aws s3 cp script-path/job-script.py s3://test-upload-buck/script_path/job_script.py
+          aws s3 cp script-path/job-script.py ${SCRIPT_LOCATION}
 
       - name: Deploy CloudFormation stack
         run: |
           aws cloudformation deploy \
             --template-file infra/infra.yaml \
             --stack-name glue-deployment-stack \
-            --capabilities CAPABILITY_NAMED_IAM
+            --capabilities CAPABILITY_NAMED_IAM \
+            --parameter-overrides \
+              SourceS3Path=${SOURCE_S3_PATH} \
+              TargetS3Path=${TARGET_S3_PATH} \
+              GlueScriptLocation=${SCRIPT_LOCATION}
