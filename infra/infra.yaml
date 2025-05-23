@@ -15,6 +15,7 @@ Resources:
 
   GlueExecutionRole:
     Type: AWS::IAM::Role
+    DeletionPolicy: Delete
     Properties:
       RoleName: GlueJobsRole
       AssumeRolePolicyDocument:
@@ -64,6 +65,7 @@ Resources:
 
   StepFunctionRole:
     Type: AWS::IAM::Role
+    DeletionPolicy: Delete
     Properties:
       RoleName: GlueParallelStepFunctionRole
       AssumeRolePolicyDocument:
