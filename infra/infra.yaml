@@ -16,7 +16,7 @@ Resources:
   GlueExecutionRole:
     Type: AWS::IAM::Role
     Properties:
-      RoleName: GlueParallelJobsRole
+      RoleName: GlueJobsRole
       AssumeRolePolicyDocument:
         Version: '2012-10-17'
         Statement:
@@ -27,7 +27,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
       Policies:
-        - PolicyName: GlueS3AccessPolicy
+        - PolicyName: GlueAccessPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
