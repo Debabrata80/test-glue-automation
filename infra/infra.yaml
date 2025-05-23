@@ -2,12 +2,12 @@ AWSTemplateFormatVersion: '2010-09-09'
 Description: Step Function that runs two Glue jobs in parallel
 
 Parameters:
-  SOURCE_PATH:
+  sourcepath:
     Type: String
     Description: S3 path for source csv file
     Default: "s3://test-upload-buck/input"
 
-  TARGET_PATH:
+  targetpath:
     Type: String
     Description: S3 path for target parque file 
     Default: "s3://test-upload-buck/output"
@@ -59,8 +59,8 @@ Resources:
         ScriptLocation: !Ref SCRIPT_LOCATION
         PythonVersion: 3
       DefaultArguments:
-        "--SOURCE_PATH": !Ref SOURCE_PATH
-        "--TARGET_PATH": !Ref TARGET_PATH
+        "--sourcepath": !Ref sourcepath
+        "--targetpath": !Ref targetpath
         "--TempDir": "s3://test-upload-buck/glue/"
         "--enable-metrics": "true"
       GlueVersion: "4.0"

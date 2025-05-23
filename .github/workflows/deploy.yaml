@@ -13,7 +13,7 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     env:
-      SOURCE_PATH: 's3://test-upload-buck/input'
+      sourcepath: 's3://test-upload-buck/input'
       TARGET_S3_PATH: 's3://test-upload-buck/output'
       SCRIPT_LOCATION: 's3://test-upload-buck/script_path/job_script.py'
 
@@ -39,6 +39,6 @@ jobs:
             --stack-name glue-deployment-stack \
             --capabilities CAPABILITY_NAMED_IAM \
             --parameter-overrides \
-              SourcePath=${SOURCE_PATH} \
-              TargetPath=${TARGET_PATH} \
+              SourcePath=${sourcepath} \
+              TargetPath=${targetpath} \
               GlueScriptLocation=${SCRIPT_LOCATION}
