@@ -5,7 +5,7 @@ Parameters:
   GlueScriptPath1:
     Type: String
     Description: S3 path to the first Glue script 
-    default: "s3://test-upload-buck/script_path/job_script.py"
+    Default: "s3://test-upload-buck/script_path/job_script.py"
 
   # GlueScriptPath2:
   #   Type: String
