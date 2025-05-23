@@ -12,7 +12,7 @@ Parameters:
     Description: S3 path for target parque file 
     Default: "s3://test-upload-buck/output"
 
-  SCRIPT_LOCATION:
+  scriptlocation:
     Type: String
     Description: S3 path to the first Glue script 
     Default: "s3://test-upload-buck/script_path/job_script.py"
@@ -56,7 +56,7 @@ Resources:
       Role: !GetAtt GlueExecutionRole.Arn
       Command:
         Name: glueetl
-        ScriptLocation: !Ref SCRIPT_LOCATION
+        ScriptLocation: !Ref scriptlocation
         PythonVersion: 3
       DefaultArguments:
         "--sourcepath": !Ref sourcepath

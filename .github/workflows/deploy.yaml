@@ -15,7 +15,7 @@ jobs:
     env:
       sourcepath: 's3://test-upload-buck/input'
       TARGET_S3_PATH: 's3://test-upload-buck/output'
-      SCRIPT_LOCATION: 's3://test-upload-buck/script_path/job_script.py'
+      scriptlocation: 's3://test-upload-buck/script_path/job_script.py'
 
     steps:
       - name: Checkout repo
@@ -30,7 +30,7 @@ jobs:
 
       - name: Upload Glue script to S3
         run: |
-          aws s3 cp script-path/job-script.py ${SCRIPT_LOCATION}
+          aws s3 cp script-path/job-script.py ${scriptlocation}
 
       - name: Deploy CloudFormation stack
         run: |
@@ -41,4 +41,4 @@ jobs:
             --parameter-overrides \
               SourcePath=${sourcepath} \
               TargetPath=${targetpath} \
-              GlueScriptLocation=${SCRIPT_LOCATION}
+              GlueScriptLocation=${scriptlocation}
