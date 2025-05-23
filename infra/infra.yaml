@@ -27,7 +27,7 @@ Resources:
       ManagedPolicyArns:
         - arn:aws:iam::aws:policy/service-role/AWSGlueServiceRole
       Policies:
-        - PolicyName: GlueAccessPolicy
+        - PolicyName: GlueJobsPolicy
           PolicyDocument:
             Version: '2012-10-17'
             Statement:
