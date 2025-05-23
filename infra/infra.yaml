@@ -116,4 +116,4 @@ Outputs:
 
   StepFunction:
     Description: ARN of the Step Function
-    Value: !Ref ParallelGlueStateMachine
+    Value: !Ref SequencecialStateMachine
